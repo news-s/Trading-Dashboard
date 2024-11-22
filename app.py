@@ -36,6 +36,7 @@ def get_data(symbol):
                     for index, row in dane.iterrows()
                 ]
             }
+        print(dane)
         return jsonify(wynik), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

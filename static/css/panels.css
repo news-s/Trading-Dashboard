@@ -1,0 +1,50 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: gray;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.left-list {
+    width: 25%;
+    background-color: rgb(83, 83, 83);
+    padding: 10px;
+    overflow-y: auto; /* Włącza przewijanie w przypadku długiej listy */
+}
+
+.left-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.left-list li {
+    margin: 10px 0;
+}
+
+.right-panels {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel {
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.panel-top {
+    background-color: #e9f7ef;
+    height: 70%; /* Wysokość dla górnego panelu */
+}
+
+.panel-bottom {
+    background-color: #fef9e7;
+    height: 30%; /* Wysokość dla dolnego panelu */
+}
