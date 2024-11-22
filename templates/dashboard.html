@@ -1,13 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona z listą i panelami</title>
+    <link rel="stylesheet" href="static/css/panels.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
+    <script src="static/js/char.js"></script>
+    <script src="static/js/stocksList.js"></script>
 </head>
 <body>
-  <h1>Dashboard</h1>
-  <p>Use the endpoint `/get_data/<symbol>` or `/get_price/<symbol>` to fetch stock data.</p>
-  <a href="/get_data/TSLA">Go to /get_data/TSLA</a>
+    <div class="container">
+        <aside class="left-list">
+            <ul align="center" id="stocks-list">
+
+            </ul>
+            <center>
+              <input type="text" name="tag" id="tag" />
+              <button onclick="run()">Pobierz</button>
+            </center>
+        </aside>
+        <main class="right-panels">
+            <div class="panel panel-top">
+                <span id="title"></span>
+                <canvas id="myChart"></canvas>
+            </div>
+            <div class="panel panel-bottom">
+                <h2>Panel Dolny</h2>
+                <p>Notatki, Wiadomości, Informacje o firmie</p>
+            </div>
+        </main>
+    </div>
 </body>
 </html>
