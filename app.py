@@ -40,7 +40,7 @@ def get_data(symbol):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/price/<symbol>', methods=['GET'])
+@app.route('/get_price/<symbol>', methods=['GET'])
 def get_stock_price(symbol):
     try:
         # Pobierz dane o spółce
