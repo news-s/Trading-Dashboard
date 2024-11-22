@@ -21,8 +21,8 @@ def dashboard():
 @app.route('/get_data/<symbol>')
 def get_data(symbol):
     try:
-        spolka = yf.Ticker("TSLA")
-        dane = spolka.history(period="1y", interval="1d")
+        spolka = yf.Ticker(symbol)
+        dane = spolka.history(period="1mo", interval="1d")
         wynik = {
                 "symbol": symbol,
                 "data": [
