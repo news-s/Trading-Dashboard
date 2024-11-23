@@ -115,16 +115,57 @@ let myChart;  // Zmienna przechowująca instancję wykresu
               }
             };
 
+          document.getElementById('title').innerHTML = `<h1 style="text-align: center; color: black;">${tag} Stock Price Chart</h1>`
           // Jeśli wykres już istnieje, zaktualizuj dane
           if (myChart) {
             myChart.data.datasets[0].data = chartData;  // Zaktualizowanie danych wykresu
             myChart.update();  // Aktualizacja wykresu
           } else {
             // Jeśli wykres nie istnieje, stwórz go
-            document.getElementById('title').innerHTML = `<h1 style="text-align: center; color: black;">${tag} Stock Price Chart</h1>`
             let ctx = document.getElementById('myChart').getContext('2d');
             myChart = new Chart(ctx, config);
           }
         })
         .catch(error => console.error('Błąd podczas pobierania danych:', error));
+    }
+
+    function get_price(tag) {
+      // Używamy fetch, który zwraca Promise
+      return fetch(`/get_price/${tag}`)
+          .then(response => {
+              // Jeśli odpowiedź nie jest OK, wyrzucamy błąd
+              if (!response.ok) {
+                  throw new Error('Błąd sieci');
+              }
+              return response.json(); // Oczekujemy JSON-a w odpowiedzi
+          })
+          .then(data => {
+              // Zwracamy cenę (będzie dostępna, kiedy Promise zostanie rozwiązany)
+              return data.current_price;
+          })
+          .catch(error => {
+              // Obsługuje błędy i może zwrócić np. null w przypadku błędu
+              console.error('Błąd pobierania ceny:', error);
+              return null; // Możesz także zwrócić domyślną wartość, np. 0
+          });
+  }
+
+    function addToFav(){
+      let tag = document.getElementById("tag").value;
+      fetch(`/add_fav/${tag}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            alert("Dodano do ulubionych");
+            let list = document.getElementById('stocks-list');
+            const li = document.createElement('li');
+            li.innerHTML = `<button type="button" onclick="get_data('${tag}')">${tag} - Loading...</button>`;
+            list.appendChild(li);
+
+            get_price(tag).then(price => {
+              list.innerHTML += `<li>
+                  <button type="button" onclick="get_data('${tag}')">${tag} - ${price.toFixed(2)}/per stock</button>
+              </li>`;
+          })})
+        .catch(error => console.error('Błąd podczas dodawania do ulubionych:', error));
     }

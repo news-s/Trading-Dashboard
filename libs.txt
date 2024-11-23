@@ -1,4 +1,5 @@
 flask
 flask-limiter
 yfinance
-python-dotenv
+flask-sqlalchemy
+bcrypt
