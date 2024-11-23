@@ -83,7 +83,7 @@ def index():
 def dashboard():
     if 'name' not in session:
         return redirect(url_for('login'))
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', name=session['name'])
 
 @app.route('/get_data/<symbol>')
 def get_data(symbol):
@@ -136,14 +136,14 @@ def get_list():
         users = dbsession.query(Users).options(joinedload(Users.favstocks)).filter_by(name=session['name']).all()
         results = {}
 
-        if not users:  # Jeśli lista użytkowników jest pusta
-            default_stocks = ["AAPL", "NVDA", "TSLA", "MSFT", "AMZN", "GOOGL", "INTC", "AMD", "NFLX"]
-            for stock in default_stocks:
-                stocks = yf.Ticker(stock)
-                price = stocks.history(period="1d")["Close"].iloc[-1]
-                results[stock] = price
-            results['Info'] = 'Dodaj jakieś wybrane przez siebie obserwowane'
-            return jsonify(results), 200
+        # if not users:  # Jeśli lista użytkowników jest pusta
+        #     default_stocks = ["AAPL", "NVDA", "TSLA", "MSFT", "AMZN", "GOOGL", "INTC", "AMD", "NFLX"]
+        #     for stock in default_stocks:
+        #         stocks = yf.Ticker(stock)
+        #         price = stocks.history(period="1d")["Close"].iloc[-1]
+        #         results[stock] = price
+        #     results['Info'] = 'Dodaj jakieś wybrane przez siebie obserwowane'
+        #     return jsonify(results), 200
 
         for user in users:
             for fav_stock in user.favstocks:  # Iteracja po ulubionych akcjach użytkownika
@@ -155,7 +155,7 @@ def get_list():
         return jsonify(results), 200
     except Exception as e:
         print(e)
-        return jsonify({"error": "im on coffee break"}), 418
+        return jsonify({"error": "im on coffee break :)"}), 418
 
     
 @app.route('/add_fav/<tag>', methods=['GET'])
@@ -163,17 +163,23 @@ def add_fav(tag):
     if 'name' not in session:
         return redirect(url_for('login'))
     try:
-        print(session['name'])
-        user = dbsession.query(Users).filter_by(name=session['name']).first()
-        stock = FavStocks(favStock=tag, user_id=user.id)
-        dbsession.add(stock)
-        dbsession.commit()
-        return jsonify({"message": "Dodano do ulubionych"}), 200
+        stock = yf.Ticker(tag)
+        data = stock.history(period="1d")
+        if not data.empty:
+            user = dbsession.query(Users).filter_by(name=session['name']).first()
+            stock = FavStocks(favStock=tag, user_id=user.id)
+            dbsession.add(stock)
+            dbsession.commit()
+            return jsonify({"message": "Dodano do ulubionych"}), 200
+        else:
+            return jsonify({"message": "Brak danych dla podanego symbolu"}), 500
     except Exception as e:
         return 500
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'name' in session:
+        return redirect(url_for('dashboard'))
     if request.method == 'POST':
         user = dbsession.query(Users).filter_by(name=request.form['username']).first()
         if user is None:    return redirect(url_for('signup'))
@@ -186,17 +192,27 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if 'name' in session:
+        return redirect(url_for('dashboard'))
     if request.method == 'POST':
-        if dbsession.query(Users).filter_by(name=request.form['username']).first() == None:
-            hashed_password = bcrypt.hashpw(request.form['password'].encode('utf-8'), salt)
-            user = Users(name=request.form['username'], password=hashed_password)
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        if dbsession.query(Users).filter_by(name=username).first() is None:
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+            user = Users(name=username, password=hashed_password)
             dbsession.add(user)
             dbsession.commit()
-            session['name'] = request.form['username']
-            return redirect(url_for('dashboard'))
+            session['name'] = username
+            return jsonify({'status': 'ok'}), 200
         else:
-            return redirect(url_for('signup'))
+            return redirect(url_for('signup'))  # Ensure the username is unique.
     return render_template('signup.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('name', None)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=config.port, debug=True)

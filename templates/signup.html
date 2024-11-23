@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <form method="post">
-        <input name="username" type="text">
-        <input name="password" type="password">
-        <input type="submit" value="Submit">
+    <link rel="stylesheet" href="static/css/signup.css" />
+    <script src="static/js/signup.js"></script>
+  </head>
+  <body>
+    <div class="container">
+    <form>
+      <h2>Sign up</h2>
+      <input name="username" type="text" placeholder="Name" />
+      <input name="password" type="password" placeholder="Password" />
+      <input name="repeted_password" type="password" placeholder="Re-Password" />
+      <div class="submit_button">
+        <input type="submit" value="Submit" class="sign-up-btn" />
+      </div>
     </form>
-</body>
+      <p>Already have an account? <a href="login">Log in</a></p>
+    </div>
+  </body>
 </html>

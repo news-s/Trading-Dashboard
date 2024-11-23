@@ -155,17 +155,20 @@ let myChart;  // Zmienna przechowująca instancję wykresu
       fetch(`/add_fav/${tag}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            alert("Dodano do ulubionych");
+            try{
+              data.message == "Brak danych dla podanego symbolu"
+            }
+            catch(error){
+              document.getElementById('fav-message').innerHTML = data.message;
+            }
             let list = document.getElementById('stocks-list');
             const li = document.createElement('li');
-            li.innerHTML = `<button type="button" onclick="get_data('${tag}')">${tag} - Loading...</button>`;
-            list.appendChild(li);
-
             get_price(tag).then(price => {
               list.innerHTML += `<li>
                   <button type="button" onclick="get_data('${tag}')">${tag} - ${price.toFixed(2)}/per stock</button>
               </li>`;
           })})
-        .catch(error => console.error('Błąd podczas dodawania do ulubionych:', error));
+        .catch(error => {
+          console.error('Błąd podczas dodawania do ulubionych:', error);
+        });
     }
