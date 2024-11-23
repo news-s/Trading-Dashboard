@@ -1,4 +1,6 @@
 /__pycache__
 /.venv
+/instance
 key.env
 test.py
+console.py
