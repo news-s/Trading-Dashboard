@@ -107,7 +107,7 @@ def get_data(symbol):
             }
         return jsonify(wynik), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return 500
 
 @app.route('/get_price/<symbol>', methods=['GET'])
 def get_stock_price(symbol):
@@ -125,7 +125,7 @@ def get_stock_price(symbol):
         }
         return jsonify(wynik), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return 500
     
 @app.route('/get_list', methods=['GET'])
 def get_list():
@@ -155,7 +155,7 @@ def get_list():
         return jsonify(results), 200
     except Exception as e:
         print(e)
-        return jsonify({"error": str(e) + " im on coffee break"}), 418
+        return jsonify({"error": "im on coffee break"}), 418
 
     
 @app.route('/add_fav/<tag>', methods=['GET'])
@@ -170,7 +170,7 @@ def add_fav(tag):
         dbsession.commit()
         return jsonify({"message": "Dodano do ulubionych"}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return 500
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
