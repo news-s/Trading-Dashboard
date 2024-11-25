@@ -40,7 +40,8 @@ function add_note(){
   .then(response => response.json())
   .then(data => {
     alert("Notatka została dodana.");
-    load_note(data.id, title);
+    notes(); // wywołanie funkcji notes() po dodaniu notatki
+    document.querySelector(`textarea[class="note-area"]`).innerText = "";
   });
 }
 
@@ -49,6 +50,7 @@ function delete_note(id){
  .then(response => response.json())
  let note = document.querySelector(`button[onclick="load_note(${id})"]`)
  let note_delete = document.querySelector(`button[onclick="delete_note(${id})"]`)
+ document.querySelector(`textarea[class="note-area"]`).innerText = ""; // czyszczenie pola
  note.remove();
  note_delete.remove();
  alert("Notatka została usunięta.");

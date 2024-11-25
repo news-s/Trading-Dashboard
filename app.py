@@ -253,6 +253,26 @@ def delete_note(id):
         print(e)
         return 500
     
+@app.route('/info/<company>')
+def info(company):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    try:
+        stock = yf.Ticker(company)
+        data = stock.history(period="1d")
+        if not data.empty:
+            results = {
+                'current_price': data['Close'].iloc[-1],
+                'change': data['Close'].iloc[-1] - data['Close'].iloc[-2],
+                'change_percent': (data['Close'].iloc[-1] - data['Close'].iloc[-2]) / data['Close'].iloc[-2] * 100
+            }
+            results.append(stock.info)
+            return jsonify(results), 200
+        else:
+            return jsonify({"error": "Brak danych dla podanego symbolu"}), 500
+    except Exception as e:
+        print(e)
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'name' in session:
