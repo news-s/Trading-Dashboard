@@ -15,10 +15,10 @@ function notes(){
     .then(response => response.json())
     .then(data =>
       data.forEach(element => {
-        list.innerHTML += `<button class="notes-select" onclick="loadNote(${element.id})">${element.title}</button>`;
+        list.innerHTML += `<button class="notes-select" onclick="load_note(${element.id})">${element.title} <button onclick="delete_note(${element.id})">X</button></button>`;
       }))} // przeciętne doświadczenie z javascriptem
 
-function loadNote(id, title){
+function load_note(id, title){
   document.getElementById('bot_title').innerText = "Notatka: " + title;
   fetch('get_note/' + id)
   .then(response => response.json())
@@ -40,6 +40,16 @@ function add_note(){
   .then(response => response.json())
   .then(data => {
     alert("Notatka została dodana.");
-    loadNote(data.id, title);
+    load_note(data.id, title);
   });
+}
+
+function delete_note(id){
+  fetch('delete_note/' + id)
+ .then(response => response.json())
+ let note = document.querySelector(`button[onclick="load_note(${id})"]`)
+ let note_delete = document.querySelector(`button[onclick="delete_note(${id})"]`)
+ note.remove();
+ note_delete.remove();
+ alert("Notatka została usunięta.");
 }

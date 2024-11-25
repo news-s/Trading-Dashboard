@@ -235,6 +235,24 @@ def add_note():
         print(e)
         return 500
     
+@app.route('/delete_note/<id>')
+def delete_note(id):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    try:
+        note = dbsession.query(Notes).filter_by(id=id).first()
+        usr = dbsession.query(Users).filter_by(name=session['name']).first()
+        if note.user_id != usr.id:
+            return jsonify({"error": "Not found"}), 404
+        if note is None:
+            return jsonify({"error": "Not found"}), 404
+        dbsession.delete(note)
+        dbsession.commit()
+        return jsonify({"message": "Usunięto notatkę"}), 200
+    except Exception as e:
+        print(e)
+        return 500
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'name' in session:
