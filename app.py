@@ -206,7 +206,7 @@ def signup():
             session['name'] = username
             return jsonify({'status': 'ok'}), 200
         else:
-            return redirect(url_for('signup'))  # Ensure the username is unique.
+            return jsonify({'status': 'repeated'})  # Ensure the username is unique.
     return render_template('signup.html')
 
 @app.route('/logout')

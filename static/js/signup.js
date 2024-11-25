@@ -19,11 +19,16 @@ document.querySelector('form').addEventListener('submit', function(event) {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
+            if (data.status == 'ok') {
                 alert('Signup successful!');
                 window.location.href = '/login'; // Redirect to login page
-            } else {
-                alert('Signup failed: ' + data.message);
+            }
+            else if (data.status == 'repeated') {
+                alert('Username already exists!');
+                document.querySelector('input[name="username"]').value = "";
+            } 
+            else {
+                alert('Signup failed: ' + data.status);
             }
         })
         .catch(error => {
