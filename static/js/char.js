@@ -1,7 +1,7 @@
 let myChart;  // Zmienna przechowująca instancję wykresu
 
     function run(){
-      let tag = document.getElementById("tag").value;
+      let tag = document.getElementById("tag").value.toUpperCase();
       get_data(tag);
     }
     
@@ -151,7 +151,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
   }
 
     function addToFav(){
-      let tag = document.getElementById("tag").value;
+      let tag = document.getElementById("tag").value.toUpperCase();
       fetch(`/add_fav/${tag}`)
         .then(response => response.json())
         .then(data => {

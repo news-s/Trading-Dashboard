@@ -65,7 +65,7 @@ class FavStocks(Base):
 
     user = relationship('Users', back_populates='favstocks')  # Corrected to match 'favstocks' in Users
 
-engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], echo=True)
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], echo=False)
 Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 dbsession = Session()
@@ -175,6 +175,103 @@ def add_fav(tag):
             return jsonify({"message": "Brak danych dla podanego symbolu"}), 500
     except Exception as e:
         return 500
+    
+@app.route('/get_notes_list', methods=['GET'])
+def get_notes_list():
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    try:
+        user = dbsession.query(Users).filter_by(name=session['name']).first()
+        notes = dbsession.query(Notes).filter_by(user_id=user.id).all()
+        results = []
+        for note in notes:
+            results.append({
+                'id': note.id,
+                'title': note.title
+            })
+        print(results)
+        return jsonify(results), 200
+    except Exception as e:
+        print(e)
+        return 500
+    
+@app.route('/get_note/<id>')
+def get_note(id):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    try:
+        note = dbsession.query(Notes).filter_by(id=id).first()
+        usr = dbsession.query(Users).filter_by(name=session['name']).first()
+        if note.user_id != usr.id:
+            return jsonify({"error": "Not found"}), 404
+        if note is None:
+            return jsonify({"error": "Not found"}), 404
+        return jsonify({
+            'id': note.id,
+            'title': note.title,
+            'text': note.text
+        }), 200
+    except Exception as e:
+        print(e)
+        return 500
+    
+@app.route('/add_note', methods=['POST'])
+def add_note():
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    try:
+        data = request.get_json()
+        title = data['title']
+        text = data['text']
+        user = dbsession.query(Users).filter_by(name=session['name']).first()
+        note = Notes(title=title, text=text, user_id=user.id)
+        dbsession.add(note)
+        dbsession.commit()
+        return jsonify({
+            'id': note.id,
+            'title': note.title
+        }), 200
+    except Exception as e:
+        print(e)
+        return 500
+    
+@app.route('/delete_note/<id>')
+def delete_note(id):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    try:
+        note = dbsession.query(Notes).filter_by(id=id).first()
+        usr = dbsession.query(Users).filter_by(name=session['name']).first()
+        if note.user_id != usr.id:
+            return jsonify({"error": "Not found"}), 404
+        if note is None:
+            return jsonify({"error": "Not found"}), 404
+        dbsession.delete(note)
+        dbsession.commit()
+        return jsonify({"message": "Usunięto notatkę"}), 200
+    except Exception as e:
+        print(e)
+        return 500
+    
+@app.route('/info/<company>')
+def info(company):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    try:
+        stock = yf.Ticker(company)
+        data = stock.history(period="1d")
+        if not data.empty:
+            results = {
+                'current_price': data['Close'].iloc[-1],
+                'change': data['Close'].iloc[-1] - data['Close'].iloc[-2],
+                'change_percent': (data['Close'].iloc[-1] - data['Close'].iloc[-2]) / data['Close'].iloc[-2] * 100
+            }
+            results.append(stock.info)
+            return jsonify(results), 200
+        else:
+            return jsonify({"error": "Brak danych dla podanego symbolu"}), 500
+    except Exception as e:
+        print(e)
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
