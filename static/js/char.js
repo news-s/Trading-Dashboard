@@ -116,6 +116,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
             };
 
           document.getElementById('title').innerHTML = `<h1 style="text-align: center; color: black;">${tag} Stock Price Chart</h1>`
+          window.globalVariable = tag
           // Jeśli wykres już istnieje, zaktualizuj dane
           if (myChart) {
             myChart.data.datasets[0].data = chartData;  // Zaktualizowanie danych wykresu

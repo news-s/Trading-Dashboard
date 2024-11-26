@@ -189,7 +189,6 @@ def get_notes_list():
                 'id': note.id,
                 'title': note.title
             })
-        print(results)
         return jsonify(results), 200
     except Exception as e:
         print(e)
@@ -259,14 +258,14 @@ def info(company):
         return redirect(url_for('login'))
     try:
         stock = yf.Ticker(company)
-        data = stock.history(period="1d")
+        data = stock.history(period="5d")
         if not data.empty:
             results = {
                 'current_price': data['Close'].iloc[-1],
                 'change': data['Close'].iloc[-1] - data['Close'].iloc[-2],
                 'change_percent': (data['Close'].iloc[-1] - data['Close'].iloc[-2]) / data['Close'].iloc[-2] * 100
             }
-            results.append(stock.info)
+            results.update(stock.info)
             return jsonify(results), 200
         else:
             return jsonify({"error": "Brak danych dla podanego symbolu"}), 500
