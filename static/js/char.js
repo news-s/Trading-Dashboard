@@ -153,7 +153,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
 
     function addToFav(){
       let tag = document.getElementById("tag").value.toUpperCase();
-      fetch(`/add_fav/${tag}`)
+      fetch(`/add_fav`, {method: "POST", headers: {'Content-Type': 'application/json'}, body: JSON.stringify({'tag': tag})})
         .then(response => response.json())
         .then(data => {
             try{

@@ -158,7 +158,7 @@ def get_list():
         return jsonify({"error": "im on coffee break :)"}), 418
 
     
-@app.route('/add_fav/<tag>', methods=['GET'])
+@app.route('/add_fav', methods=['POST'])
 def add_fav(tag):
     if 'name' not in session:
         return redirect(url_for('login'))
