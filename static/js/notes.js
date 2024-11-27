@@ -15,7 +15,7 @@ function notes(){
     .then(response => response.json())
     .then(data =>
       data.forEach(element => {
-        list.innerHTML += `<button class="notes-select" onclick="load_note(${element.id})">${element.title} <button onclick="delete_note(${element.id})">X</button></button>`;
+        list.innerHTML += `<button class="notes-select" onclick="load_note(${element.id}, '${element.title}')">${element.title} <button onclick="delete_note(${element.id}, ${element.title})">X</button></button>`;
       }))} // przeciętne doświadczenie z javascriptem
 
 function load_note(id, title){
@@ -45,10 +45,10 @@ function add_note(){
   });
 }
 
-function delete_note(id){
+function delete_note(id, title){
   fetch('delete_note/' + id)
  .then(response => response.json())
- let note = document.querySelector(`button[onclick="load_note(${id})"]`)
+ let note = document.querySelector(`button[onclick="load_note(${id}, '${title}')"]`)
  let note_delete = document.querySelector(`button[onclick="delete_note(${id})"]`)
  document.querySelector(`textarea[class="note-area"]`).innerText = ""; // czyszczenie pola
  note.remove();

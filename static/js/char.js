@@ -1,4 +1,4 @@
-let myChart;  // Zmienna przechowująca instancję wykresu
+let myChart;
 
     function run(){
       let tag = document.getElementById("tag").value.toUpperCase();
@@ -6,17 +6,14 @@ let myChart;  // Zmienna przechowująca instancję wykresu
     }
     
     function get_data(tag){
-      // Pobierz dane z endpointu Flask
       fetch(`/get_data/${tag}`)
         .then(response => response.json())
         .then(data => {
-          // Przetwórz dane z JSON na format Chart.js
           const chartData = data.data.map(item => ({
-            x: item.date, // Data
-            y: item.close // Cena zamknięcia
+            x: item.date, 
+            y: item.close
           }));
 
-          // Ustawienia animacji
           const totalDuration = 1000;
           const delayBetweenPoints = totalDuration / chartData.length;
           const previousY = (ctx) => 
@@ -29,7 +26,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
               type: 'number',
               easing: 'linear',
               duration: delayBetweenPoints,
-              from: NaN, // Punkt początkowy pomijany
+              from: NaN,
               delay(ctx) {
                 if (ctx.type !== 'data' || ctx.xStarted) {
                   return 0;
@@ -53,7 +50,6 @@ let myChart;  // Zmienna przechowująca instancję wykresu
             }
           };
 
-          // Konfiguracja wykresu
           const config = {
               type: 'line',
               data: {
@@ -69,7 +65,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
                 animation,
                 interaction: {
                   intersect: false,
-                  mode: 'index',  // Umożliwia wyświetlanie tooltipów tylko dla najbliższego punktu
+                  mode: 'index',
                 },
                 plugins: {
                   legend: {
@@ -79,14 +75,10 @@ let myChart;  // Zmienna przechowująca instancję wykresu
                   tooltip: {
                     callbacks: {
                       label: function(tooltipItem) {
-                        // Pobieramy datę i cenę dla danego punktu
-                        const date = tooltipItem.raw.x;  // Data w tym przypadku to wartość na osi X
-                        const price = tooltipItem.raw.y; // Cena to wartość na osi Y
-                
-                        // Formatowanie daty przy użyciu toLocaleDateString
-                        const formattedDate = new Date(date).toLocaleDateString('en-US');  // Można dostosować formatowanie daty
-                
-                        // Zwracamy tekst dla tooltipa
+                        const date = tooltipItem.raw.x;  
+                        const price = tooltipItem.raw.y; 
+                        const formattedDate = new Date(date).toLocaleDateString('en-US');
+
                         return `Date: ${formattedDate} - Price: $${price.toFixed(2)}`;
                       }
                     }
@@ -117,12 +109,10 @@ let myChart;  // Zmienna przechowująca instancję wykresu
 
           document.getElementById('title').innerHTML = `<h1 style="text-align: center; color: black;">${tag} Stock Price Chart</h1>`
           window.globalVariable = tag
-          // Jeśli wykres już istnieje, zaktualizuj dane
           if (myChart) {
-            myChart.data.datasets[0].data = chartData;  // Zaktualizowanie danych wykresu
-            myChart.update();  // Aktualizacja wykresu
+            myChart.data.datasets[0].data = chartData;
+            myChart.update();
           } else {
-            // Jeśli wykres nie istnieje, stwórz go
             let ctx = document.getElementById('myChart').getContext('2d');
             myChart = new Chart(ctx, config);
           }
@@ -131,23 +121,19 @@ let myChart;  // Zmienna przechowująca instancję wykresu
     }
 
     function get_price(tag) {
-      // Używamy fetch, który zwraca Promise
       return fetch(`/get_price/${tag}`)
           .then(response => {
-              // Jeśli odpowiedź nie jest OK, wyrzucamy błąd
               if (!response.ok) {
                   throw new Error('Błąd sieci');
               }
-              return response.json(); // Oczekujemy JSON-a w odpowiedzi
+              return response.json();
           })
           .then(data => {
-              // Zwracamy cenę (będzie dostępna, kiedy Promise zostanie rozwiązany)
               return data.current_price;
           })
           .catch(error => {
-              // Obsługuje błędy i może zwrócić np. null w przypadku błędu
               console.error('Błąd pobierania ceny:', error);
-              return null; // Możesz także zwrócić domyślną wartość, np. 0
+              return null;
           });
   }
 
