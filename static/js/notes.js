@@ -1,22 +1,40 @@
-function notes(){
-    let container = document.getElementById('cont');
-    document.getElementById('bot_title').innerText = "Notatki o firmie";
-    container.innerHTML = `
-    <div class="bot-notes-main-panel">
-    <textarea class="note-area" placeholder="Wpisz tutaj swoje notatki..."></textarea>
+function notes() {
+  const container = document.getElementById('cont');
+  document.getElementById('bot_title').innerText = "Notatki o firmie";
+
+  container.innerHTML = `
+    <div class="notes-container flex flex-col gap-4">
+      <div class="note-editor flex flex-col">
+        <textarea class="note-area resize-none p-2 rounded shadow-sm" placeholder="Wpisz tutaj swoje notatki..."></textarea>
+        <button class="add-note btn-primary ml-auto mt-2">Dodaj notatkę</button>
+      </div>
+      <div class="notes-list flex flex-col gap-2">
+        </div>
     </div>
-    <div class="button-list">
-    <button class="add-note" onclick="add_note()">Add</button>
-    </div>
-    `
-    
-    const list = document.querySelector('.button-list')
-    fetch('get_notes_list')
+  `;
+
+  const notesList = document.querySelector('.notes-list');
+
+  fetch('get_notes_list')
     .then(response => response.json())
-    .then(data =>
+    .then(data => {
       data.forEach(element => {
-        list.innerHTML += `<button class="notes-select" onclick="load_note(${element.id}, '${element.title}')">${element.title} <button onclick="delete_note(${element.id}, ${element.title})">X</button></button>`;
-      }))} // przeciętne doświadczenie z javascriptem
+        const noteButton = document.createElement('button');
+        noteButton.classList.add('notes-select', 'btn', 'btn-outline');
+        noteButton.innerText = element.title;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-note', 'btn', 'btn-danger', 'ml-2');
+        deleteButton.innerText = 'X';
+
+        deleteButton.addEventListener('click', () => delete_note(element.id, element.title));
+
+        noteButton.appendChild(deleteButton);
+        noteButton.addEventListener('click', () => load_note(element.id, element.title));
+        notesList.appendChild(noteButton);
+      });
+    });
+} // przeciętne doświadczenie z javascriptem
 
 function load_note(id, title){
   document.getElementById('bot_title').innerText = "Notatka: " + title;
@@ -40,7 +58,7 @@ function add_note(){
   .then(response => response.json())
   .then(data => {
     alert("Notatka została dodana.");
-    notes(); // wywołanie funkcji notes() po dodaniu notatki
+    notes();
     document.querySelector(`textarea[class="note-area"]`).innerText = "";
   });
 }
