@@ -1,7 +1,7 @@
 try:
     from flask import *
     import yfinance as yf
-    import config, random, bcrypt
+    import config, random, bcrypt, html
     from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
     from sqlalchemy.orm import declarative_base, relationship, sessionmaker, joinedload
 except:
@@ -113,6 +113,7 @@ def get_data(symbol):
 def get_stock_price(symbol):
     if 'name' not in session:
         return redirect(url_for('login'))
+    html.escape(symbol)
     try:
         # Pobierz dane o spółce
         spolka = yf.Ticker(symbol)
@@ -158,19 +159,24 @@ def get_list():
         return jsonify({"error": "im on coffee break :)"}), 418
 
     
-@app.route('/add_fav/<tag>', methods=['GET'])
-def add_fav(tag):
+@app.route('/add_fav', methods=['POST'])
+def add_fav():
     if 'name' not in session:
         return redirect(url_for('login'))
+    tag = html.escape(request.get_json().get('tag'))
     try:
         stock = yf.Ticker(tag)
         data = stock.history(period="1d")
         if not data.empty:
             user = dbsession.query(Users).filter_by(name=session['name']).first()
             stock = FavStocks(favStock=tag, user_id=user.id)
-            dbsession.add(stock)
-            dbsession.commit()
-            return jsonify({"message": "Dodano do ulubionych"}), 200
+            isInDB = dbsession.query(FavStocks).filter_by(favStock=tag).first()
+            if isInDB == None:
+                dbsession.add(stock)
+                dbsession.commit()
+                return jsonify({"message": "Dodano do ulubionych"}), 200
+            else:
+                return jsonify({"message": "Symbol już jest w ulubionych"}), 409
         else:
             return jsonify({"message": "Brak danych dla podanego symbolu"}), 500
     except Exception as e:
@@ -220,8 +226,8 @@ def add_note():
         return redirect(url_for('login'))
     try:
         data = request.get_json()
-        title = data['title']
-        text = data['text']
+        title = html.escape(data['title'])
+        text = html.escape(data['text'])
         user = dbsession.query(Users).filter_by(name=session['name']).first()
         note = Notes(title=title, text=text, user_id=user.id)
         dbsession.add(note)
@@ -256,6 +262,7 @@ def delete_note(id):
 def info(company):
     if 'name' not in session:
         return redirect(url_for('login'))
+    html.escape(company)
     try:
         stock = yf.Ticker(company)
         data = stock.history(period="5d")
@@ -277,10 +284,11 @@ def login():
     if 'name' in session:
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
-        user = dbsession.query(Users).filter_by(name=request.form['username']).first()
-        if user is None:    return redirect(url_for('signup'))
-        if bcrypt.checkpw(request.form['password'].encode('utf-8'), user.password):
-            session['name'] = request.form['username']
+        user = dbsession.query(Users).filter_by(name=html.escape(request.form['username'])).first()
+        if user is None:
+            return redirect(url_for('signup'))
+        if bcrypt.checkpw(html.escape(request.form['password']).encode('utf-8'), user.password):
+            session['name'] = html.escape(request.form['username'])
             return redirect(url_for('dashboard'))
         else:
             return redirect(url_for('login'))
@@ -292,8 +300,8 @@ def signup():
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
         data = request.get_json()
-        username = data['username']
-        password = data['password']
+        username = html.escape(data['username'])
+        password = html.escape(data['password'])
         if dbsession.query(Users).filter_by(name=username).first() is None:
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
             user = Users(name=username, password=hashed_password)
