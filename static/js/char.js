@@ -160,6 +160,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
             return;
         }})
         .then(data => {
+          console.log(data);
             try{
               data.message == "Brak danych dla podanego symbolu"
             }
@@ -175,5 +176,19 @@ let myChart;  // Zmienna przechowująca instancję wykresu
           })})
         .catch(error => {
           console.error('Błąd podczas dodawania do ulubionych:', error);
+        });
+    }
+
+    function removeFromFav(tag) {
+      fetch(`/delete_fav`, { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ 'tag': tag }) })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          let list = document.getElementById('stocks-list');
+          list.innerHTML = '';
+          get_data();
+        })
+        .catch(error => {
+          console.error('Błąd podczas usuwania z ulubionych:', error);
         });
     }
