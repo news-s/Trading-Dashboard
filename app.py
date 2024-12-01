@@ -1,14 +1,8 @@
-try:
-    from flask import *
-    import yfinance as yf
-    import config, random, bcrypt, html
-    from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-    from sqlalchemy.orm import declarative_base, relationship, sessionmaker, joinedload
-except:
-    import sys, os
-    os.system('pip install libs.txt')
-    print('Please re-run this code')
-    sys.exit(1)
+from flask import *
+import yfinance as yf
+import config, random, bcrypt, html
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker, joinedload
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///instance/database.sqlite3'
@@ -76,7 +70,7 @@ dbsession = Session()
 def index():
     if 'name' not in session:
         return redirect(url_for('login'))
-    return render_template('index.html')
+    return redirect(url_for('dashboard'))
 
 @isLoggedIn
 @app.route('/dashboard')
@@ -156,7 +150,7 @@ def get_list():
         return jsonify(results), 200
     except Exception as e:
         print(e)
-        return jsonify({"error": "im on coffee break :)"}), 418
+        return jsonify({"error": "im on coffee break :)"}), 418 # I'm a teapot :D - 418 HTTP status code for fun :D  
 
     
 @app.route('/add_fav', methods=['POST'])
@@ -170,7 +164,9 @@ def add_fav():
         if not data.empty:
             user = dbsession.query(Users).filter_by(name=session['name']).first()
             stock = FavStocks(favStock=tag, user_id=user.id)
-            isInDB = dbsession.query(FavStocks).filter_by(favStock=tag).first()
+            isInDB = dbsession.query(FavStocks).filter(
+                (FavStocks.favStock == tag) & (FavStocks.user_id == session['name'])
+            ).first()
             if isInDB == None:
                 dbsession.add(stock)
                 dbsession.commit()
@@ -179,6 +175,23 @@ def add_fav():
                 return jsonify({"message": "Symbol już jest w ulubionych"}), 409
         else:
             return jsonify({"message": "Brak danych dla podanego symbolu"}), 500
+    except Exception as e:
+        return 500
+    
+@app.route('/delete_fav', methods=['POST'])
+def delete_fav():
+    if 'name' not in session:
+        return redirect(url_for('login'))
+    tag = html.escape(request.get_json().get('tag'))
+    try:
+        user = dbsession.query(Users).filter_by(name=session['name']).first()
+        fav_stock = dbsession.query(FavStocks).filter_by(favStock=tag, user_id=user.id).first()
+        if fav_stock is not None:
+            dbsession.delete(fav_stock)
+            dbsession.commit()
+            return jsonify({"message": "Usunięto z ulubionych"}), 200
+        else:
+            return jsonify({"message": "Symbol nie jest w ulubionych"}), 404
     except Exception as e:
         return 500
     
@@ -239,6 +252,7 @@ def add_note():
     except Exception as e:
         print(e)
         return 500
+    
     
 @app.route('/delete_note/<id>')
 def delete_note(id):
@@ -319,4 +333,4 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=config.port, debug=True)
+    app.run(host='0.0.0.0', port=config.port, debug=False)

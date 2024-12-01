@@ -1,36 +1,11 @@
+/* Ogólne ustawienia */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: gray;
-}
-
-button {
-    padding: 15px 25px;
-    background-color: #4e1cd8;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    display: flex;
-    display: inline-block;
-    cursor: pointer;
-    --margin: 10px 0;
-    display: inline-block;
-    min-width: 190px;
-    min-height: 50px;
     padding: 0;
-    text-align: center;
-    line-height: 50px; /* Wyrównanie tekstu pionowe */
-}
-
-button:hover{
-    background-color: #390099;
-}
-
-input[type="text"] {
-    padding: 15px 25px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    margin: 10px 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Ciemny szary/czarny */
+    color: #ffffff; /* Biały tekst dla kontrastu */
+    overflow: hidden;
 }
 
 .container {
@@ -38,42 +13,214 @@ input[type="text"] {
     height: 100vh;
 }
 
+/* Lewy panel */
 .left-list {
     width: 25%;
-    background-color: rgb(83, 83, 83);
-    padding: 10px;
-    overflow-y: auto; /* Włącza przewijanie w przypadku długiej listy */
+    background-color: #1c1c1c; /* Ciemny szary */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+.left-list h2 {
+    color: #0077ff; /* Niebieski akcent */
+    margin-bottom: 20px;
 }
 
 .left-list ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .left-list li {
-    margin: 10px 0;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #2a2a2a; /* Jaśniejszy szary */
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
 }
 
+.left-list input {
+    width: 60%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.left-list button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #0077ff;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.left-list button:hover {
+    background-color: #005bb5; /* Ciemniejszy niebieski */
+}
+
+.left-list a {
+    display: inline-block;
+    margin-top: 10px;
+    color: #0077ff;
+    text-decoration: none;
+}
+
+.left-list a:hover {
+    text-decoration: underline;
+}
+
+/* Główna sekcja */
 .right-panels {
     width: 75%;
     display: flex;
     flex-direction: column;
+    background-color: #1c1c1c;
 }
 
-.panel {
-    margin: 10px;
+.panel-top, .panel-bottom {
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #ffffff;
+    margin: 10px;
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .panel-top {
-    background-color: #e9f7ef;
-    height: 70%; /* Wysokość dla górnego panelu */
+    flex: 2;
+}
+
+#myChart{
+    max-height: 70%;
 }
 
 .panel-bottom {
-    background-color: #fef9e7;
-    height: 30%; /* Wysokość dla dolnego panelu */
+    flex: 1;
+}
+
+.panel-top canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.bot_button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #0077ff;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.bot_button:hover {
+    background-color: #005bb5;
+}
+
+/* Kontener główny */
+#cont {
+    max-width: fit-content;
+    max-height: 70%;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #000000;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Główne pole tekstowe */
+.bot-notes-main-panel {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    background-color: #000000;
+    border-radius: 10px;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+}
+
+.note-area {
+    width: 100%;
+    height: 300px;
+    padding: 10px;
+    font-size: 16px;
+    color: #333;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    resize: none;
+}
+
+/* Panel listy */
+.button-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #000000;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+/* Lista notatek */
+.note-list {
+    list-style: none;
+    margin: 10px 0 0 0;
+    padding: 0;
+}
+
+.note-list li {
+    padding: 10px;
+    background-color: #000000;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.note-list li:hover {
+    background-color: #e6e6e6;
+}
+
+/* Styl przycisku Add */
+.add-note {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-note:hover {
+    background-color: #0056b3;
+}
+
+#info{
+    overflow-y:scroll;
+    padding: 5px;
+    margin-bottom: 250px;
+}
+
+#info a{
+    color: #007bff;
+    text-decoration: none;
+    font-size: large;
 }

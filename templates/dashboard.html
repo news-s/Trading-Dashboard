@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="static/css/panels.css">
-    <link rel="stylesheet" href="static/css/bot.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
     <script src="static/js/char.js"></script>
@@ -21,29 +20,29 @@
 
             </ul>
             <center>
-              <input type="text" name="tag" id="tag" />
+              <input type="text" name="tag" id="tag" /><br/>
               <button onclick="run()">Pobierz</button>
               <button onclick="addToFav()">Dodaj do ulubionych</button><br/>
               <a href="logout">Wyloguj się</a>
             </center>
         </aside>
         <main class="right-panels">
-            <div class="panel panel-top">
-                <span id="title"></span>
+            <div class="panel-top">
+                <span id="title" style="text-align: center;"></span>
                 <!-- <canvas id="drawingCanvas"> -->
                     <canvas id="myChart"></canvas>
                 <!-- </canvas> -->
             </div>
-            <div class="panel panel-bottom">
+            <div class="panel-bottom">
                 <h3 id="bot_title"></h3>
-                <span>
-                    <button class="bot_button" onclick='notes()'>Notatki o firmie</button>
+                <span style="margin-left: 3.5%">
+                    <button class="bot_button" onclick='notes()'>Notatki</button>
                     <button class="bot_button" onclick="info()">Informacje o firmie</button>
-                    <button class="bot_button" onclick="news()">Wiadomości</button>
-                    <div id="cont">
-
-                    </div>
+                    <button class="bot_button" onclick="clearc()">X</button>
                 </span>
+                <div id="cont">
+                    <marquee behavior="alternate">Wybierz jakąś opcję</marquee>
+                </div>
             </div>
         </main>
     </div>
