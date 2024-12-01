@@ -5,6 +5,7 @@ function info() {
     }
 
     let contener = document.getElementById('cont');
+    document.getElementById('bot_title').innerText = "Info o firmie";
     
     fetch(`/info/${window.globalVariable}`)
     .then(response => response.json())
@@ -32,5 +33,6 @@ function info() {
 function clearc() {
     console.log("cleared");
     let contener = document.getElementById('cont');
-    contener.innerHTML = "";
+    contener.innerHTML = "<marquee behavior='alternate'>Wybierz jakąś opcję</marquee>";
+    document.getElementById('bot_title').innerText = "";
 }

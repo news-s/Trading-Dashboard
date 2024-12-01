@@ -1,14 +1,8 @@
-try:
-    from flask import *
-    import yfinance as yf
-    import config, random, bcrypt, html
-    from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-    from sqlalchemy.orm import declarative_base, relationship, sessionmaker, joinedload
-except:
-    import sys, os
-    os.system('pip install libs.txt')
-    print('Please re-run this code')
-    sys.exit(1)
+from flask import *
+import yfinance as yf
+import config, random, bcrypt, html
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker, joinedload
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///instance/database.sqlite3'
@@ -339,4 +333,4 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=config.port, debug=True)
+    app.run(host='0.0.0.0', port=config.port, debug=False)
