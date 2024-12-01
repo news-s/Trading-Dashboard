@@ -76,7 +76,7 @@ dbsession = Session()
 def index():
     if 'name' not in session:
         return redirect(url_for('login'))
-    return render_template('index.html')
+    return redirect(url_for('dashboard'))
 
 @isLoggedIn
 @app.route('/dashboard')

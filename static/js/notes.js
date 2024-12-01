@@ -5,9 +5,9 @@ function notes(){
     <div class="bot-notes-main-panel">
     <textarea class="note-area" placeholder="Wpisz tutaj swoje notatki..."></textarea>
     </div>
-    <div class="button-list">
+    <aside class="button-list">
     <button class="add-note" onclick="add_note()">Add</button>
-    </div>
+    </aside>
     `
     
     const list = document.querySelector('.button-list')
@@ -15,7 +15,7 @@ function notes(){
     .then(response => response.json())
     .then(data =>
       data.forEach(element => {
-        list.innerHTML += `<button class="notes-select" onclick="load_note(${element.id})">${element.title} <button onclick="delete_note(${element.id})">X</button></button>`;
+        list.innerHTML += `<button class="notes-select" onclick="load_note(${element.id}, '${element.title}')">${element.title} <button onclick="delete_note(${element.id}, '${element.title}')">X</button></button>`;
       }))} // przeciętne doświadczenie z javascriptem
 
 function load_note(id, title){
@@ -45,13 +45,17 @@ function add_note(){
   });
 }
 
-function delete_note(id){
+function delete_note(id, title) {
   fetch('delete_note/' + id)
  .then(response => response.json())
- let note = document.querySelector(`button[onclick="load_note(${id})"]`)
- let note_delete = document.querySelector(`button[onclick="delete_note(${id})"]`)
- document.querySelector(`textarea[class="note-area"]`).innerText = ""; // czyszczenie pola
+ let note = document.querySelector(`button[onclick="load_note(${id}, '${title}')"]`)
+ let note_delete = document.querySelector(`button[onclick="delete_note(${id}, '${title}')"]`)
+ let note_area = document.getElementsByClassName('note-area');
+ let note_title = document.getElementById('bot_title');
+ document.querySelector(`textarea[class="note-area"]`).innerText = "";
  note.remove();
  note_delete.remove();
+ note_area[0].value = "";
+ note_title.innerText = "Notatki";
  alert("Notatka została usunięta.");
 }

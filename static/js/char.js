@@ -115,7 +115,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
               }
             };
 
-          document.getElementById('title').innerHTML = `<h1 style="text-align: center; color: black;">${tag} Stock Price Chart</h1>`
+          document.getElementById('title').innerHTML = `<h1 id='title'>${tag} Stock Price Chart</h1>`
           window.globalVariable = tag
           // Jeśli wykres już istnieje, zaktualizuj dane
           if (myChart) {
@@ -159,25 +159,21 @@ let myChart;  // Zmienna przechowująca instancję wykresu
             alert("Aleady in the favs");
             return;
         }})
-        .then(data => {
-          console.log(data);
-            try{
-              data.message == "Brak danych dla podanego symbolu"
-            }
-            catch(error){
-              document.getElementById('fav-message').innerHTML = data.message;
-            }
-            let list = document.getElementById('stocks-list');
-            const li = document.createElement('li');
-            get_price(tag).then(price => {
-              list.innerHTML += `<li>
-                  <button type="button" onclick="get_data('${tag}')">${tag} - ${price.toFixed(2)}/per stock</button>
-              </li>`;
-          })})
-        .catch(error => {
-          console.error('Błąd podczas dodawania do ulubionych:', error);
-        });
+        .then(data => {get_new_list()});
     }
+
+    //Dear reader, please forgive me all my bad decisions made in this codebase.
+    function get_new_list(){
+      fetch('/get_list')
+      .then(response => response.json())
+      .then(data => {
+          const list = document.getElementById('stocks-list');
+          list.innerHTML = '';
+          Object.keys(data).forEach(item => {
+              list.innerHTML += `<li><button type="button" onclick="get_data('${item}')">${item} - ${data[item].toFixed(2)}/per stock</button><button onclick="removeFromFav('${item}')">x</button><br/></li>`;
+          })
+        })
+      }
 
     function removeFromFav(tag) {
       fetch(`/delete_fav`, { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ 'tag': tag }) })
@@ -186,7 +182,7 @@ let myChart;  // Zmienna przechowująca instancję wykresu
           alert(data.message);
           let list = document.getElementById('stocks-list');
           list.innerHTML = '';
-          get_data();
+          get_new_list();
         })
         .catch(error => {
           console.error('Błąd podczas usuwania z ulubionych:', error);
