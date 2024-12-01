@@ -1,6 +1,8 @@
 from flask import *
 import yfinance as yf
 import config, random, bcrypt, html
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker, joinedload
 
@@ -14,6 +16,12 @@ for i in range(255):
     key = key + str(random.randint(0, 9))
 app.secret_key = key
 del key
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=[f"{config.reqests_limits} per minute"]
+)
 
 #Dekorator do walidacji czy użytkownik jest zalogowany
 def isLoggedIn(func):
@@ -331,6 +339,10 @@ def signup():
 def logout():
     session.pop('name', None)
     return redirect(url_for('login'))
+
+@app.errorhandler(404)
+def page_not_found():
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=config.port, debug=False)
