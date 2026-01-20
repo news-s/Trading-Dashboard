@@ -1,6 +1,6 @@
 from flask import *
 import yfinance as yf
-import config, random, bcrypt, html
+import config, random, bcrypt, html, os
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
@@ -67,6 +67,11 @@ class FavStocks(Base):
 
     user = relationship('Users', back_populates='favstocks')  # Corrected to match 'favstocks' in Users
 
+if not os.path.exists("instance"):
+    os.mkdir("instance")
+    os.chdir("instance")
+    f=open("database.sqlite3", 'x').close()
+    os.chdir("..")
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], echo=False)
 Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
